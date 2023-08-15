@@ -5,7 +5,7 @@ namespace Qz\Providers;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 
-class AdminPermissionServiceProvider extends ServiceProvider
+class QzServiceProvider extends ServiceProvider
 {
     /**
      * Register services.
