@@ -1,0 +1,17 @@
+{
+    "name": "qz/qz",
+    "authors": [
+        {
+            "name": "root",
+            "email": "xcx@qzyyds.com"
+        }
+    ],
+    "require": {
+        "php": "^7.3|^8.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Qz\\": "src/"
+        }
+    }
+}

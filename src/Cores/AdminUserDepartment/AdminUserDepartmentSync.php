@@ -1,0 +1,74 @@
+<?php
+
+namespace Qz\Cores\AdminUserDepartment;
+
+use Illuminate\Support\Arr;
+use Qz\Cores\Core;
+use Qz\Models\AdminUserDepartment;
+
+class AdminUserDepartmentSync extends Core
+{
+    protected function execute()
+    {
+        if (empty($this->getAdminUserId())) {
+            return;
+        }
+        if (is_null($this->getAdminUserDepartments())) {
+            return;
+        }
+        AdminUserDepartment::query()
+            ->where('admin_user_id', $this->getAdminUserId())
+            ->whereNotIn('admin_department_id', Arr::pluck($this->getAdminUserDepartments(), 'admin_department_id'))
+            ->delete();
+        $adminUserDepartments = $this->getAdminUserDepartments();
+        if (!empty($adminUserDepartments)) {
+            foreach ($adminUserDepartments as $adminUserDepartment) {
+                AdminUserDepartmentAdd::init()
+                    ->setAdminUserId($this->getAdminUserId())
+                    ->setAdminDepartmentId(Arr::get($adminUserDepartment, 'admin_department_id'))
+                    ->setAdministrator((boolean) Arr::get($adminUserDepartment, 'administrator'))
+                    ->run();
+            }
+        }
+    }
+
+    protected $adminUserId;
+
+    /**
+     * @return mixed
+     */
+    public function getAdminUserId()
+    {
+        return $this->adminUserId;
+    }
+
+    /**
+     * @param mixed $adminUserId
+     * @return AdminUserDepartmentSync
+     */
+    public function setAdminUserId($adminUserId)
+    {
+        $this->adminUserId = $adminUserId;
+        return $this;
+    }
+
+    protected $adminUserDepartments;
+
+    /**
+     * @return mixed
+     */
+    public function getAdminUserDepartments()
+    {
+        return $this->adminUserDepartments;
+    }
+
+    /**
+     * @param mixed $adminUserDepartments
+     * @return AdminUserDepartmentSync
+     */
+    public function setAdminUserDepartments($adminUserDepartments)
+    {
+        $this->adminUserDepartments = $adminUserDepartments;
+        return $this;
+    }
+}
