@@ -4,6 +4,8 @@ namespace Qz\Models;
 
 class AdminCategoryDepartment extends Model
 {
+    protected $connection = 'common';
+
     protected $fillable = [
         'admin_department_id',
         'category_id'
