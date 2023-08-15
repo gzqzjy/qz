@@ -145,6 +145,13 @@ class QzServiceProvider extends ServiceProvider
                     Route::post('admin-requests/all', 'AdminRequestController@all');
                     Route::post('admin-requests/types', 'AdminRequestController@types');
                 });
+                Route::namespace('Category')->group(function () {
+                    Route::post('categories/add', 'CategoryV1Controller@store');
+                    Route::post('categories/get', 'CategoryV1Controller@get');
+                    Route::post('categories/all', 'CategoryV1Controller@all');
+                    Route::post('categories/update', 'CategoryV1Controller@update');
+                    Route::post('categories/delete', 'CategoryV1Controller@destroy');
+                });
             });
     }
 
