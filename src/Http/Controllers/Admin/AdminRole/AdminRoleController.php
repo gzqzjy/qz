@@ -29,6 +29,7 @@ class AdminRoleController extends AdminController
         $model = AdminRole::query();
         $model = $this->filter($model);
         $model = $model
+            ->orderByDesc('id')
             ->get();
         $model->loadCount([
             'adminDepartmentRoles',

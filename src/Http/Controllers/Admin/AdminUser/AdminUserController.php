@@ -30,7 +30,7 @@ class AdminUserController extends AdminController
                 });
             });
         }
-        $model = $model->get();
+        $model = $model->orderByDesc('id')->get();
         $model->load([
             'adminUsers',
             'adminUsers.adminUserDepartments',

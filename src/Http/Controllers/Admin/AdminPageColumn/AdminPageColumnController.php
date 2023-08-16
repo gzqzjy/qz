@@ -16,7 +16,8 @@ class AdminPageColumnController extends AdminController
             ->selectRaw($select)
             ->whereHas('adminPage');
         $model = $this->filter($model);
-        $model = $model->get();
+        $model = $model->orderByDesc('id')
+            ->get();
         return $this->response($model);
     }
 }

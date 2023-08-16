@@ -15,7 +15,7 @@ class AdminPageOptionController extends AdminController
         $model = AdminPageOption::query()
             ->selectRaw($select);
         $model = $this->filter($model);
-        $model = $model->get();
+        $model = $model->orderByDesc('id')->get();
         return $this->response($model);
     }
 }

@@ -26,6 +26,7 @@ class AdminRoleGroupController extends AdminController
         $model = $this->filter($model);
         $model = $model
             ->selectRaw('id,name as admin_role_group_name,id admin_role_group_id,created_at')
+            ->orderByDesc('id')
             ->paginate($this->getPageSize());
         $filter = [];
         if ($this->getParam('filter')) {
