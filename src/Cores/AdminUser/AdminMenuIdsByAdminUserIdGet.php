@@ -6,7 +6,6 @@ use Illuminate\Support\Arr;
 use Qz\Cores\Core;
 use Qz\Models\AdminMenu;
 use Qz\Models\AdminUser;
-use Qz\Models\AdminUserMenu;
 
 class AdminMenuIdsByAdminUserIdGet extends Core
 {
@@ -23,20 +22,16 @@ class AdminMenuIdsByAdminUserIdGet extends Core
         }
         $model->load('administrator');
         if (Arr::get($model, 'administrator.id')) {
-            $ids = AdminMenu::query()
+            $this->adminMenuIds = AdminMenu::query()
                 ->where('customer_id', Arr::get($model, 'customer_id'))
                 ->pluck('id')
                 ->toArray();
-            if (!empty($ids)) {
-                $this->adminMenuIds = $ids;
-            }
             return;
         }
         $model->load([
             'adminUserRoles',
             'adminUserRoles.adminRole',
             'adminUserRoles.adminRole.adminRoleMenus',
-            'adminUserMenus',
         ]);
         $adminUserRoles = Arr::get($model, 'adminUserRoles');
         foreach ($adminUserRoles as $adminUserRole) {
@@ -47,16 +42,6 @@ class AdminMenuIdsByAdminUserIdGet extends Core
             $adminRoleMenus = Arr::get($adminRole, 'adminRoleMenus');
             foreach ($adminRoleMenus as $adminRoleMenu) {
                 $this->adminMenuIds[] = Arr::get($adminRoleMenu, 'admin_menu_id');
-            }
-        }
-        $adminUserMenus = Arr::get($model, 'adminUserMenus');
-        foreach ($adminUserMenus as $adminUserMenu) {
-            if (Arr::get($adminUserMenu, 'type') != AdminUserMenu::TYPE_DELETE) {
-                $this->adminMenuIds[] = Arr::get($adminUserMenu, 'admin_menu_id');
-            } else {
-                $this->adminMenuIds = Arr::where($this->adminMenuIds, function ($adminMenuId) use ($adminUserMenu) {
-                    return $adminMenuId != Arr::get($adminUserMenu, 'admin_menu_id');
-                });
             }
         }
         $this->adminMenuIds = array_unique(array_values($this->adminMenuIds));

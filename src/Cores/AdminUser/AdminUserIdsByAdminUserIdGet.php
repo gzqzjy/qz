@@ -6,10 +6,10 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Arr;
 use Qz\Cores\Core;
 use Qz\Models\AdminDepartment;
+use Qz\Models\AdminRequest;
 use Qz\Models\AdminRoleRequest;
 use Qz\Models\AdminUser;
 use Qz\Models\AdminUserDepartment;
-use Qz\Models\AdminUserRequest;
 
 class AdminUserIdsByAdminUserIdGet extends Core
 {
@@ -36,15 +36,6 @@ class AdminUserIdsByAdminUserIdGet extends Core
             }
             return;
         }
-        $adminUserRequest = AdminUserRequest::query()
-            ->select(['type'])
-            ->where('admin_user_id', $this->getAdminUserId())
-            ->where('admin_request_id', $this->getAdminRequestId())
-            ->first();
-        if ($adminUserRequest) {
-            $this->getIdsByTypes(Arr::get($adminUserRequest, 'types'));
-            return;
-        }
         $adminRoleRequests = AdminRoleRequest::query()
             ->select(['type'])
             ->where('admin_request_id', $this->getAdminRequestId())
@@ -54,51 +45,50 @@ class AdminUserIdsByAdminUserIdGet extends Core
                 });
             })->get();
         if (!empty($adminRoleRequests) && count($adminRoleRequests)) {
-            $types = [];
-            foreach ($adminRoleRequests as $adminRoleRequest) {
-                $types = array_merge($types, Arr::get($adminRoleRequest, 'types'));
-            }
-            $this->getIdsByTypes($types);
+            $this->getIdsByAdminRoleRequests($adminRoleRequests);
             return;
         }
-        $adminUserRequest = AdminUserRequest::query()
+        $adminRoleRequests = AdminRoleRequest::query()
             ->select(['type'])
-            ->where('admin_user_id', $this->getAdminUserId())
             ->where('admin_request_id', 0)
-            ->first();
-        if ($adminUserRequest) {
-            $this->getIdsByTypes(Arr::get($adminUserRequest, 'types'));
+            ->whereHas('adminRole', function (Builder $builder) {
+                $builder->whereHas('adminUserRoles', function (Builder $builder) {
+                    $builder->where('admin_user_id', $this->getAdminUserId());
+                });
+            })->get();
+        if (!empty($adminRoleRequests) && count($adminRoleRequests)) {
+            $this->getIdsByAdminRoleRequests($adminRoleRequests);
             return;
         }
-        $adminUserRequest = AdminUserRequest::query()
-            ->select(['type'])
-            ->where('admin_user_id', 0)
-            ->where('admin_request_id', 0)
-            ->first();
-        if ($adminUserRequest) {
-            $this->getIdsByTypes(Arr::get($adminUserRequest, 'types'));
-            return;
-        }
-        $adminUserRequest = AdminRoleRequest::query()
+        $adminRoleRequests = AdminRoleRequest::query()
             ->select(['type'])
             ->where('admin_role_id', 0)
             ->where('admin_request_id', 0)
-            ->first();
-        if ($adminUserRequest) {
-            $this->getIdsByTypes(Arr::get($adminUserRequest, 'types'));
+            ->get();
+        if (!empty($adminRoleRequests) && count($adminRoleRequests)) {
+            $this->getIdsByAdminRoleRequests($adminRoleRequests);
             return;
         }
+    }
+
+    protected function getIdsByAdminRoleRequests($adminRoleRequests)
+    {
+        $types = [];
+        foreach ($adminRoleRequests as $adminRoleRequest) {
+            $types = array_merge($types, Arr::get($adminRoleRequest, 'types'));
+        }
+        $this->getIdsByTypes($types);
     }
 
     protected function getIdsByTypes($types = [])
     {
         $types = array_unique($types);
         foreach ($types as $type) {
-            if ($type == AdminUserRequest::SELF) {
+            if ($type == AdminRequest::SELF) {
                 $this->ids[] = $this->getAdminUserId();
-            } elseif ($type == AdminUserRequest::UNDEFINED) {
+            } elseif ($type == AdminRequest::UNDEFINED) {
                 $this->ids[] = 0;
-            } elseif ($type == AdminUserRequest::THIS) {
+            } elseif ($type == AdminRequest::THIS) {
                 $adminDepartmentIds = AdminDepartmentIdsByAdminUserIdGet::init()
                     ->setAdminUserId($this->getAdminUserId())
                     ->run()
@@ -108,8 +98,8 @@ class AdminUserIdsByAdminUserIdGet extends Core
                     ->whereIn('admin_department_id', $adminDepartmentIds)
                     ->pluck('admin_user_id')
                     ->toArray();
-                $this->ids = array_unique(array_merge($this->ids, $ids));
-            } elseif ($type == AdminUserRequest::PEER) {
+                $this->ids = array_merge($this->ids, $ids);
+            } elseif ($type == AdminRequest::PEER) {
                 $adminDepartmentIds = AdminDepartmentIdsByAdminUserIdGet::init()
                     ->setAdminUserId($this->getAdminUserId())
                     ->run()
@@ -121,8 +111,8 @@ class AdminUserIdsByAdminUserIdGet extends Core
                     })
                     ->pluck('admin_user_id')
                     ->toArray();
-                $this->ids = array_unique(array_merge($this->ids, $ids));
-            } elseif ($type == AdminUserRequest::CHILDREN) {
+                $this->ids = array_merge($this->ids, $ids);
+            } elseif ($type == AdminRequest::CHILDREN) {
                 $adminDepartmentIds = AdminDepartmentIdsByAdminUserIdGet::init()
                     ->setAdminUserId($this->getAdminUserId())
                     ->run()
@@ -139,9 +129,16 @@ class AdminUserIdsByAdminUserIdGet extends Core
                     ->where('admin_user_id', '!=', $this->getAdminUserId())
                     ->pluck('admin_user_id')
                     ->toArray();
-                $this->ids = array_unique(array_merge($this->ids, $ids));
+                $this->ids = array_merge($this->ids, $ids);
+            } elseif ($type == AdminRequest::ALL) {
+                $ids = AdminUser::query()
+                    ->pluck('id')
+                    ->toArray();
+                $ids[] = 0;
+                $this->ids = array_merge($this->ids, $ids);
             }
         }
+        $this->ids = array_unique($this->ids);
     }
 
     protected function getAllAdminDepartmentIds($items, $ids = [])

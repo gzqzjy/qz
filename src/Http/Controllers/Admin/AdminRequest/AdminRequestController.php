@@ -3,7 +3,7 @@ namespace Qz\Http\Controllers\Admin\AdminRequest;
 
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Arr;
-use Qz\Cores\AdminUser\AdminPageOptionIdsGetByAdminUserId;
+use Qz\Cores\AdminUser\AdminPageOptionIdsByAdminUserIdGet;
 use Qz\Http\Controllers\Admin\AdminController;
 use Qz\Models\AdminRequest;
 
@@ -14,10 +14,10 @@ class AdminRequestController extends AdminController
         $model = AdminRequest::query()
             ->select(['id', 'name', 'admin_page_option_id']);
         if (!$this->isAdministrator()) {
-            $model->whereIn('admin_page_option_id', (array) AdminPageOptionIdsGetByAdminUserId::init()
+            $model->whereIn('admin_page_option_id', (array) AdminPageOptionIdsByAdminUserIdGet::init()
                 ->setAdminUserId($this->getLoginAdminUserId())
                 ->run()
-                ->getId());
+                ->getAdminPageOptionIds());
         }
         $model = $model->orderBy('admin_page_option_id')
             ->get();

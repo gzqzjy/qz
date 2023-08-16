@@ -5,7 +5,6 @@ namespace Qz\Cores\AdminUser;
 use Illuminate\Support\Arr;
 use Qz\Cores\Core;
 use Qz\Models\AdminUser;
-use Qz\Models\AdminUserPageOption;
 
 class AdminPageOptionIdsByAdminUserIdGet extends Core
 {
@@ -24,7 +23,6 @@ class AdminPageOptionIdsByAdminUserIdGet extends Core
             'adminUserRoles',
             'adminUserRoles.adminRole',
             'adminUserRoles.adminRole.adminRolePageOptions',
-            'adminUserPageOptions',
         ]);
         $adminUserRoles = Arr::get($model, 'adminUserRoles');
         foreach ($adminUserRoles as $adminUserRole) {
@@ -37,18 +35,9 @@ class AdminPageOptionIdsByAdminUserIdGet extends Core
                 $this->adminPageOptionIds[] = Arr::get($adminRolePageOption, 'admin_page_option_id');
             }
         }
-        $adminUserPageOptions = Arr::get($model, 'adminUserPageOptions');
-        foreach ($adminUserPageOptions as $adminUserPageOption) {
-            if (Arr::get($adminUserPageOption, 'type') != AdminUserPageOption::TYPE_DELETE) {
-                $this->adminPageOptionIds[] = Arr::get($adminUserPageOption, 'admin_page_option_id');
-            } else {
-                $this->adminPageOptionIds = Arr::where($this->adminPageOptionIds, function ($adminPageOptionId) use ($adminUserPageOption) {
-                    return $adminPageOptionId != Arr::get($adminUserPageOption, 'admin_page_option_id');
-                });
-            }
-        }
         $this->adminPageOptionIds = array_unique(array_values($this->adminPageOptionIds));
     }
+
     protected $adminPageOptionIds = [];
 
     /**

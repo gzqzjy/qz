@@ -142,5 +142,4 @@ class AdminPageOptionAdd extends Core
         $this->isShow = $isShow;
         return $this;
     }
-
 }

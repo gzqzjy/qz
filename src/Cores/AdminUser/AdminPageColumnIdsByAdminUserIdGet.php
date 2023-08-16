@@ -5,7 +5,6 @@ namespace Qz\Cores\AdminUser;
 use Illuminate\Support\Arr;
 use Qz\Cores\Core;
 use Qz\Models\AdminUser;
-use Qz\Models\AdminUserPageColumn;
 
 class AdminPageColumnIdsByAdminUserIdGet extends Core
 {
@@ -24,7 +23,6 @@ class AdminPageColumnIdsByAdminUserIdGet extends Core
             'adminUserRoles',
             'adminUserRoles.adminRole',
             'adminUserRoles.adminRole.adminRolePageColumns',
-            'adminUserPageColumns',
         ]);
         $adminUserRoles = Arr::get($model, 'adminUserRoles');
         foreach ($adminUserRoles as $adminUserRole) {
@@ -35,16 +33,6 @@ class AdminPageColumnIdsByAdminUserIdGet extends Core
             $adminRolePageColumns = Arr::get($adminRole, 'adminRolePageColumns');
             foreach ($adminRolePageColumns as $adminRolePageColumn) {
                 $this->adminPageColumnIds[] = (int) Arr::get($adminRolePageColumn, 'admin_page_column_id');
-            }
-        }
-        $adminUserPageColumns = Arr::get($model, 'adminUserPageColumns');
-        foreach ($adminUserPageColumns as $adminUserPageColumn) {
-            if (Arr::get($adminUserPageColumn, 'type') != AdminUserPageColumn::TYPE_DELETE) {
-                $this->adminPageColumnIds[] = (int) Arr::get($adminUserPageColumn, 'admin_page_column_id');
-            } else {
-                $this->adminPageColumnIds = Arr::where($this->adminPageColumnIds, function ($adminPageColumnId) use ($adminUserPageColumn) {
-                    return $adminPageColumnId != Arr::get($adminUserPageColumn, 'admin_page_column_id');
-                });
             }
         }
         $this->adminPageColumnIds = array_unique(array_values($this->adminPageColumnIds));

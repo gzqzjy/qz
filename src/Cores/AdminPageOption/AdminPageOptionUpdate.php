@@ -57,7 +57,6 @@ class AdminPageOptionUpdate extends Core
         return $this;
     }
 
-
     protected $adminPageId;
 
     /**
@@ -77,6 +76,7 @@ class AdminPageOptionUpdate extends Core
         $this->adminPageId = $adminPageId;
         return $this;
     }
+
     protected $name;
 
     /**
@@ -96,6 +96,7 @@ class AdminPageOptionUpdate extends Core
         $this->name = $name;
         return $this;
     }
+
     protected $code;
 
     /**

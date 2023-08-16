@@ -1,4 +1,5 @@
 <?php
+
 namespace Qz\Cores\AdminCategoryDepartment;
 
 use Qz\Cores\Core;

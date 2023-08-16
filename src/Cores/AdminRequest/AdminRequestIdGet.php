@@ -1,8 +1,6 @@
 <?php
 
-
 namespace Qz\Cores\AdminRequest;
-
 
 use Qz\Cores\Core;
 use Qz\Models\AdminRequest;

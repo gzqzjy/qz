@@ -3,10 +3,6 @@
 namespace Qz\Cores\AdminUser;
 
 use Qz\Cores\AdminUserDepartment\AdminUserDepartmentSync;
-use Qz\Cores\AdminUserMenu\AdminUserMenuSync;
-use Qz\Cores\AdminUserPageColumn\AdminUserPageColumnSync;
-use Qz\Cores\AdminUserPageOption\AdminUserPageOptionSync;
-use Qz\Cores\AdminUserRequest\AdminUserRequestSync;
 use Qz\Cores\AdminUserRole\AdminUserRoleSync;
 use Qz\Cores\Core;
 use Qz\Models\AdminUser;
@@ -37,22 +33,6 @@ class AdminUserUpdate extends Core
         AdminUserDepartmentSync::init()
             ->setAdminUserId($this->getId())
             ->setAdminUserDepartments($this->getAdminUserDepartments())
-            ->run();
-        AdminUserMenuSync::init()
-            ->setAdminUserId($this->getId())
-            ->setAdminMenuIds($this->getAdminMenuIds())
-            ->run();
-        AdminUserPageColumnSync::init()
-            ->setAdminUserId($this->getId())
-            ->setAdminPageColumnIds($this->getAdminPageColumnIds())
-            ->run();
-        AdminUserPageOptionSync::init()
-            ->setAdminUserId($this->getId())
-            ->setAdminPageOptionIds($this->getAdminPageOptionIds())
-            ->run();
-        AdminUserRequestSync::init()
-            ->setAdminUserId($this->getId())
-            ->setAdminRequests($this->getAdminRequests())
             ->run();
     }
 
@@ -191,66 +171,6 @@ class AdminUserUpdate extends Core
         return $this;
     }
 
-    protected $adminMenu;
-
-    protected $adminPageColumn;
-
-    protected $adminPageOption;
-
-    /**
-     * @return mixed
-     */
-    public function getAdminMenu()
-    {
-        return $this->adminMenu;
-    }
-
-    /**
-     * @param mixed $adminMenu
-     * @return AdminUserUpdate
-     */
-    public function setAdminMenu($adminMenu)
-    {
-        $this->adminMenu = $adminMenu;
-        return $this;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getAdminPageColumn()
-    {
-        return $this->adminPageColumn;
-    }
-
-    /**
-     * @param mixed $adminPageColumn
-     * @return AdminUserUpdate
-     */
-    public function setAdminPageColumn($adminPageColumn)
-    {
-        $this->adminPageColumn = $adminPageColumn;
-        return $this;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getAdminPageOption()
-    {
-        return $this->adminPageOption;
-    }
-
-    /**
-     * @param mixed $adminPageOption
-     * @return AdminUserUpdate
-     */
-    public function setAdminPageOption($adminPageOption)
-    {
-        $this->adminPageOption = $adminPageOption;
-        return $this;
-    }
-
     protected $adminUserDepartments;
 
     /**
@@ -268,86 +188,6 @@ class AdminUserUpdate extends Core
     public function setAdminUserDepartments($adminUserDepartments)
     {
         $this->adminUserDepartments = $adminUserDepartments;
-        return $this;
-    }
-
-    protected $adminMenuIds;
-
-    /**
-     * @return mixed
-     */
-    public function getAdminMenuIds()
-    {
-        return $this->adminMenuIds;
-    }
-
-    /**
-     * @param mixed $adminMenuIds
-     * @return AdminUserUpdate
-     */
-    public function setAdminMenuIds($adminMenuIds)
-    {
-        $this->adminMenuIds = $adminMenuIds;
-        return $this;
-    }
-
-    protected $adminPageOptionIds;
-
-    /**
-     * @return mixed
-     */
-    public function getAdminPageOptionIds()
-    {
-        return $this->adminPageOptionIds;
-    }
-
-    /**
-     * @param mixed $adminPageOptionIds
-     * @return AdminUserUpdate
-     */
-    public function setAdminPageOptionIds($adminPageOptionIds)
-    {
-        $this->adminPageOptionIds = $adminPageOptionIds;
-        return $this;
-    }
-
-    protected $adminPageColumnIds;
-
-    /**
-     * @return mixed
-     */
-    public function getAdminPageColumnIds()
-    {
-        return $this->adminPageColumnIds;
-    }
-
-    /**
-     * @param mixed $adminPageColumnIds
-     * @return AdminUserUpdate
-     */
-    public function setAdminPageColumnIds($adminPageColumnIds)
-    {
-        $this->adminPageColumnIds = $adminPageColumnIds;
-        return $this;
-    }
-
-    protected $adminRequests;
-
-    /**
-     * @return mixed
-     */
-    public function getAdminRequests()
-    {
-        return $this->adminRequests;
-    }
-
-    /**
-     * @param mixed $adminRequests
-     * @return AdminUserUpdate
-     */
-    public function setAdminRequests($adminRequests)
-    {
-        $this->adminRequests = $adminRequests;
         return $this;
     }
 }

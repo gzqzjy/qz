@@ -23,23 +23,18 @@ class AdminDepartmentIdsByAdminUserIdGet extends Core
         }
         $adminUser->load('administrator');
         if (Arr::get($adminUser, 'administrator.id')) {
-            $ids = AdminDepartment::query()
+            $this->ids = AdminDepartment::query()
                 ->where('customer_id', Arr::get($adminUser, 'customer_id'))
                 ->pluck('id')
                 ->toArray();
-            if (!empty($ids)) {
-                $this->ids = array_merge($this->ids, $ids);
-            }
             return;
         }
-        $ids = AdminUserDepartment::query()
+        $this->ids = AdminUserDepartment::query()
             ->where('admin_user_id', $this->getAdminUserId())
             ->pluck('admin_department_id')
             ->toArray();
-        if (!empty($ids)) {
-            $this->ids = array_merge($this->ids, $ids);
-        }
         $this->ids = array_unique($this->ids);
+        return;
     }
 
     protected $adminUserId;

@@ -4,10 +4,6 @@ namespace Qz\Http\Controllers\Admin\AdminUser;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Arr;
-use Qz\Cores\AdminUser\AdminMenuIdsByAdminUserIdGet;
-use Qz\Cores\AdminUser\AdminPageColumnIdsByAdminUserIdGet;
-use Qz\Cores\AdminUser\AdminPageOptionIdsByAdminUserIdGet;
-use Qz\Cores\AdminUser\AdminRequestsByAdminUserIdGet;
 use Qz\Cores\AdminUser\AdminUserAdd;
 use Qz\Cores\AdminUser\AdminUserDelete;
 use Qz\Cores\AdminUser\AdminUserUpdate;
@@ -72,10 +68,6 @@ class AdminUserController extends AdminController
         }
         $id = AdminUserAdd::init()
             ->setParam($this->getParam())
-            ->setAdminMenuIds($this->getParam('permission.admin_menu_ids'))
-            ->setAdminPageOptionIds($this->getParam('permission.admin_page_option_ids'))
-            ->setAdminPageColumnIds($this->getParam('permission.admin_page_column_ids'))
-            ->setAdminRequests($this->getParam('permission.admin_requests'))
             ->run()
             ->getId();
         return $this->success(compact('id'));
@@ -108,10 +100,6 @@ class AdminUserController extends AdminController
         $id = AdminUserUpdate::init()
             ->setId($this->getParam('id'))
             ->setParam($this->getParam())
-            ->setAdminMenuIds($this->getParam('permission.admin_menu_ids'))
-            ->setAdminPageOptionIds($this->getParam('permission.admin_page_option_ids'))
-            ->setAdminPageColumnIds($this->getParam('permission.admin_page_column_ids'))
-            ->setAdminRequests($this->getParam('permission.admin_requests'))
             ->run()
             ->getId();
         return $this->success(compact('id'));
@@ -166,35 +154,5 @@ class AdminUserController extends AdminController
             $data[] = compact('value', 'label');
         }
         return $this->json($data);
-    }
-
-    public function pagePermission()
-    {
-        $param = $this->getParam();
-        $id = Arr::get($param, 'admin_user_id');
-        $adminMenuIds = AdminMenuIdsByAdminUserIdGet::init()
-            ->setAdminUserId($id)
-            ->run()
-            ->getAdminMenuIds();
-        $adminPageColumnIds = AdminPageColumnIdsByAdminUserIdGet::init()
-            ->setAdminUserId($id)
-            ->run()
-            ->getAdminPageColumnIds();
-        $adminPageOptionIds = AdminPageOptionIdsByAdminUserIdGet::init()
-            ->setAdminUserId($id)
-            ->run()
-            ->getAdminPageOptionIds();
-        return $this->success(compact('adminMenuIds', 'adminPageOptionIds', 'adminPageColumnIds'));
-    }
-
-    public function requestPermission()
-    {
-        $param = $this->getParam();
-        $id = Arr::get($param, 'admin_user_id');
-        $adminRequests = AdminRequestsByAdminUserIdGet::init()
-            ->setAdminUserId($id)
-            ->run()
-            ->getAdminRequests();
-        return $this->success(compact('adminRequests'));
     }
 }

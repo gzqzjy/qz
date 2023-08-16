@@ -1,4 +1,5 @@
 <?php
+
 namespace Qz\Cores\AdminRequest;
 
 use Illuminate\Support\Arr;
@@ -17,7 +18,7 @@ class AdminRequestAdd extends Core
             ->updateOrCreate(Arr::whereNotNull([
                 'admin_page_option_id' => $this->getAdminPageOptionId(),
                 'code' => $this->getCode()
-            ]),Arr::whereNotNull([
+            ]), Arr::whereNotNull([
                 'name' => $this->getName()
             ]));
         if ($model->trashed()) {
