@@ -7,6 +7,7 @@ use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Qz\Cores\AdminPage\AdminPageIdGet;
 use Qz\Cores\AdminPageOption\AdminPageOptionAdd;
 use Qz\Cores\AdminPageOption\AdminPageOptionIdGet;
@@ -56,6 +57,9 @@ class AccessMiddleware
         if (empty($user) || !$user instanceof AdminUser) {
             return $next($request);
         }
+        Log::withContext([
+            'login-admin-user-id' => Arr::get($user, 'id'),
+        ]);
         $user->load('administrator');
         Access::setAdminUserId(Arr::get($user, 'id'));
         Access::setCustomerId(Arr::get($user, 'customer_id'));
