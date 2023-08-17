@@ -235,6 +235,15 @@ class AdminRoleController extends AdminController
                 ->orderBy('admin_request_id')
                 ->get()
                 ->toArray();
+        }else{
+            $defaultRequests = AdminRoleRequest::query()
+                ->select(['admin_request_id', 'type'])
+                ->where('admin_role_id', 0)
+                ->whereNotIn('admin_request_id', Arr::pluck($adminRequests, 'admin_request_id'))
+                ->orderBy('admin_request_id')
+                ->get()
+                ->toArray();
+            $adminRequests = array_merge($adminRequests, $defaultRequests);
         }
         return $this->success(compact('adminRequests'));
     }

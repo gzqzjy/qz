@@ -48,6 +48,15 @@ class AdminUserIdsByAdminUserIdGet extends Core
             $this->getIdsByAdminRoleRequests($adminRoleRequests);
             return;
         }
+        $adminRoleRequest = AdminRoleRequest::query()
+            ->select(['type'])
+            ->where('admin_request_id',  $this->getAdminRequestId())
+            ->where('admin_role_id', 0)
+            ->first();
+        if ($adminRoleRequest) {
+            $this->getIdsByTypes(Arr::get($adminRoleRequest, 'types'));
+            return;
+        }
         $adminRoleRequests = AdminRoleRequest::query()
             ->select(['type'])
             ->where('admin_request_id', 0)
