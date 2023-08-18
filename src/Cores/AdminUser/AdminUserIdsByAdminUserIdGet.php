@@ -18,6 +18,15 @@ class AdminUserIdsByAdminUserIdGet extends Core
         if (empty($this->getAdminUserId())) {
             return;
         }
+        $ids = AdminUser::query()
+            ->where('customer_id', Arr::get($adminUser, 'customer_id'))
+            ->pluck('id')
+            ->toArray();
+        $this->ids[] = 0;
+        if (!empty($ids)) {
+            $this->ids = array_unique(array_merge($this->ids, $ids));
+        }
+        return;
         $adminUser = AdminUser::query()
             ->select(['id', 'customer_id'])
             ->find($this->getAdminUserId());
