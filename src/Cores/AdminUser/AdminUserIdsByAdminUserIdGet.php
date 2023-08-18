@@ -18,6 +18,12 @@ class AdminUserIdsByAdminUserIdGet extends Core
         if (empty($this->getAdminUserId())) {
             return;
         }
+        $adminUser = AdminUser::query()
+            ->select(['id', 'customer_id'])
+            ->find($this->getAdminUserId());
+        if (empty($adminUser)) {
+            return;
+        }
         $ids = AdminUser::query()
             ->where('customer_id', Arr::get($adminUser, 'customer_id'))
             ->pluck('id')
@@ -27,66 +33,6 @@ class AdminUserIdsByAdminUserIdGet extends Core
             $this->ids = array_unique(array_merge($this->ids, $ids));
         }
         return;
-        $adminUser = AdminUser::query()
-            ->select(['id', 'customer_id'])
-            ->find($this->getAdminUserId());
-        if (empty($adminUser)) {
-            return;
-        }
-        $adminUser->load('administrator');
-        if (Arr::get($adminUser, 'administrator.id')) {
-            $ids = AdminUser::query()
-                ->where('customer_id', Arr::get($adminUser, 'customer_id'))
-                ->pluck('id')
-                ->toArray();
-            $this->ids[] = 0;
-            if (!empty($ids)) {
-                $this->ids = array_unique(array_merge($this->ids, $ids));
-            }
-            return;
-        }
-        $adminRoleRequests = AdminRoleRequest::query()
-            ->select(['type'])
-            ->where('admin_request_id', $this->getAdminRequestId())
-            ->whereHas('adminRole', function (Builder $builder) {
-                $builder->whereHas('adminUserRoles', function (Builder $builder) {
-                    $builder->where('admin_user_id', $this->getAdminUserId());
-                });
-            })->get();
-        if (!empty($adminRoleRequests) && count($adminRoleRequests)) {
-            $this->getIdsByAdminRoleRequests($adminRoleRequests);
-            return;
-        }
-        $adminRoleRequest = AdminRoleRequest::query()
-            ->select(['type'])
-            ->where('admin_request_id',  $this->getAdminRequestId())
-            ->where('admin_role_id', 0)
-            ->first();
-        if ($adminRoleRequest) {
-            $this->getIdsByTypes(Arr::get($adminRoleRequest, 'types'));
-            return;
-        }
-        $adminRoleRequests = AdminRoleRequest::query()
-            ->select(['type'])
-            ->where('admin_request_id', 0)
-            ->whereHas('adminRole', function (Builder $builder) {
-                $builder->whereHas('adminUserRoles', function (Builder $builder) {
-                    $builder->where('admin_user_id', $this->getAdminUserId());
-                });
-            })->get();
-        if (!empty($adminRoleRequests) && count($adminRoleRequests)) {
-            $this->getIdsByAdminRoleRequests($adminRoleRequests);
-            return;
-        }
-        $adminRoleRequests = AdminRoleRequest::query()
-            ->select(['type'])
-            ->where('admin_role_id', 0)
-            ->where('admin_request_id', 0)
-            ->get();
-        if (!empty($adminRoleRequests) && count($adminRoleRequests)) {
-            $this->getIdsByAdminRoleRequests($adminRoleRequests);
-            return;
-        }
     }
 
     protected function getIdsByAdminRoleRequests($adminRoleRequests)
