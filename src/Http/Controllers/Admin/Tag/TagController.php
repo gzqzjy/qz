@@ -10,6 +10,7 @@ use Qz\Http\Controllers\Admin\AdminController;
 use Qz\Models\Tag;
 use Illuminate\Support\Arr;
 use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\Validator;
 
 class TagController extends AdminController
 {

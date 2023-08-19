@@ -9,6 +9,7 @@ use Qz\Http\Controllers\Admin\AdminController;
 use Qz\Models\TagGroup;
 use Illuminate\Support\Arr;
 use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\Validator;
 
 class TagGroupController extends AdminController
 {
