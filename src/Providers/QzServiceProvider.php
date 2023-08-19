@@ -146,19 +146,19 @@ class QzServiceProvider extends ServiceProvider
                     Route::post('categories/delete', 'CategoryController@destroy');
                 });
                 Route::namespace('TagGroup\V1')->group(function () {
-                    Route::post('tag-groups/get', 'TagGroupV1Controller@get');
-                    Route::post('tag-groups/all', 'TagGroupV1Controller@all');
-                    Route::post('tag-groups/add', 'TagGroupV1Controller@store');
-                    Route::post('tag-groups/update', 'TagGroupV1Controller@update');
-                    Route::post('tag-groups/delete', 'TagGroupV1Controller@destroy');
+                    Route::post('tag-groups/get', 'TagGroupController@get');
+                    Route::post('tag-groups/all', 'TagGroupController@all');
+                    Route::post('tag-groups/add', 'TagGroupController@store');
+                    Route::post('tag-groups/update', 'TagGroupController@update');
+                    Route::post('tag-groups/delete', 'TagGroupController@destroy');
                 });
                 Route::namespace('Tag\V1')->group(function () {
-                    Route::post('tags/get', 'TagV1Controller@get');
-                    Route::post('tags/all', 'TagV1Controller@all');
-                    Route::post('tags/add', 'TagV1Controller@store');
-                    Route::post('tags/update', 'TagV1Controller@update');
-                    Route::post('tags/delete', 'TagV1Controller@destroy');
-                    Route::post('tags/batch-group', 'TagV1Controller@batchGroup');
+                    Route::post('tags/get', 'TagController@get');
+                    Route::post('tags/all', 'TagController@all');
+                    Route::post('tags/add', 'TagController@store');
+                    Route::post('tags/update', 'TagController@update');
+                    Route::post('tags/delete', 'TagController@destroy');
+                    Route::post('tags/batch-group', 'TagController@batchGroup');
                 });
             });
     }
