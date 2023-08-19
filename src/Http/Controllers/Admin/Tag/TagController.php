@@ -59,7 +59,7 @@ class TagController extends AdminController
 
     public function store()
     {
-        $this->paramValidate([
+        $validator = Validator::make($this->getParam(), [
             'name' => [
                 'required',
                 Rule::unique(Tag::class)
@@ -71,6 +71,9 @@ class TagController extends AdminController
             'name.required' => '标签名称是必须的',
             'name.unique' => '已存在重复标签名称',
         ]);
+        if ($validator->fails()) {
+            return $this->error($validator->errors()->first());
+        }
         $id = TagAdd::init()
             ->setName($this->getParam('name'))
             ->setStatus(Tag::STATUS_ENABLE)
@@ -84,7 +87,7 @@ class TagController extends AdminController
 
     public function update()
     {
-        $this->paramValidate([
+        $validator = Validator::make($this->getParam(), [
             'name' => [
                 Rule::unique(Tag::class)
                     ->where('name', $this->getParam('name'))
@@ -95,6 +98,9 @@ class TagController extends AdminController
         ], [
             'name.unique' => '已存在重复标签名称',
         ]);
+        if ($validator->fails()) {
+            return $this->error($validator->errors()->first());
+        }
         $id = TagUpdate::init()
             ->setId($this->getParam('id'))
             ->setName($this->getParam('name'))
