@@ -4,6 +4,7 @@ namespace Qz\Models;
 
 class TagGroup extends Model
 {
+    protected $connection = 'common';
     protected $fillable = [
         'name',
         'status',

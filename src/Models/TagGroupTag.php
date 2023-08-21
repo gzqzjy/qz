@@ -4,6 +4,7 @@ namespace Qz\Models;
 
 class TagGroupTag extends Model
 {
+    protected $connection = 'common';
     protected $fillable = [
         'tag_id',
         'tag_group_id',
