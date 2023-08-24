@@ -24,10 +24,11 @@ class AdminUserIdsByAdminUserIdGet extends Core
         if (empty($adminUser)) {
             return;
         }
+        $this->setCustomerId(Arr::get($adminUser, 'customer_id'));
         $adminUser->load('administrator');
         if (Arr::get($adminUser, 'administrator.id')) {
             $ids = AdminUser::query()
-                ->where('customer_id', Arr::get($adminUser, 'customer_id'))
+                ->where('customer_id', $this->getCustomerId())
                 ->pluck('id')
                 ->toArray();
             $this->ids[] = 0;
@@ -141,6 +142,7 @@ class AdminUserIdsByAdminUserIdGet extends Core
                 $this->ids = array_merge($this->ids, $ids);
             } elseif ($type == AdminRequest::ALL) {
                 $ids = AdminUser::query()
+                    ->where('customer_id', $this->getCustomerId())
                     ->pluck('id')
                     ->toArray();
                 $ids[] = 0;
@@ -244,4 +246,25 @@ class AdminUserIdsByAdminUserIdGet extends Core
         $this->types = $types;
         return $this;
     }
+
+    protected $customerId;
+
+    /**
+     * @return mixed
+     */
+    protected function getCustomerId()
+    {
+        return $this->customerId;
+    }
+
+    /**
+     * @param mixed $customerId
+     * @return AdminUserIdsByAdminUserIdGet
+     */
+    protected function setCustomerId($customerId)
+    {
+        $this->customerId = $customerId;
+        return $this;
+    }
+
 }
