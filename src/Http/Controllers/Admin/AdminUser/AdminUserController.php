@@ -12,6 +12,7 @@ use Qz\Models\AdminUser;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
+use Qz\Models\AdminUserDepartment;
 
 class AdminUserController extends AdminController
 {
@@ -55,17 +56,18 @@ class AdminUserController extends AdminController
     public function store()
     {
         $this->addParam('customer_id', $this->getCustomerId());
-        $validator = Validator::make($this->getParam(), [
-            'mobile' => [
-                Rule::unique(AdminUser::class)
-                    ->withoutTrashed(),
-            ],
-        ], [
-            'mobile.unique' => '员工手机号不能重复',
-        ]);
-        if ($validator->fails()) {
-            return $this->error($validator->errors()->first());
+        $adminUserId = AdminUser::query()
+            ->where('mobile', $this->getParam('mobile'))
+            ->value('id');
+        if ($adminUserId){
+            $exist = AdminUserDepartment::query()
+                ->where('admin_user_id', $adminUserId)
+                ->exists();
+            if ($exist){
+                return $this->error('员工手机号不能重复');
+            }
         }
+
         $id = AdminUserAdd::init()
             ->setParam($this->getParam())
             ->run()
