@@ -109,6 +109,7 @@ class QzServiceProvider extends ServiceProvider
                     Route::post('admin-users/all', 'AdminUserController@all');
                     Route::post('admin-users/all-status', 'AdminUserController@allStatus');
                     Route::post('admin-users/all-sex', 'AdminUserController@allSex');
+                    Route::post('admin-users/update-password', 'AdminUserController@updatePassword');
                 });
                 Route::namespace('AdminRoleGroup\V1')->group(function () {
                     Route::post('admin-role-groups/get', 'AdminRoleGroupController@get');

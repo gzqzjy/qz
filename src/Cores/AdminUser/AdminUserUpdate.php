@@ -2,6 +2,7 @@
 
 namespace Qz\Cores\AdminUser;
 
+use Illuminate\Support\Facades\Log;
 use Qz\Cores\AdminUserDepartment\AdminUserDepartmentSync;
 use Qz\Cores\AdminUserRole\AdminUserRoleSync;
 use Qz\Cores\Core;
@@ -18,6 +19,7 @@ class AdminUserUpdate extends Core
             'mobile' => $this->getMobile(),
             'status' => $this->getStatus(),
             'sex' => $this->getSex(),
+            'password' => $this->getPassword(),
         ]);
         if (!empty($update)) {
             $model = AdminUser::withTrashed()
@@ -190,4 +192,25 @@ class AdminUserUpdate extends Core
         $this->adminUserDepartments = $adminUserDepartments;
         return $this;
     }
+
+    protected $password;
+
+    /**
+     * @return mixed
+     */
+    public function getPassword()
+    {
+        return $this->password;
+    }
+
+    /**
+     * @param mixed $password
+     * @return AdminUserUpdate
+     */
+    public function setPassword($password)
+    {
+        $this->password = $password;
+        return $this;
+    }
+
 }

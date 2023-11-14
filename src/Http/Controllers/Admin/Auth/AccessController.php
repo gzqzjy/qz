@@ -3,6 +3,7 @@
 namespace Qz\Http\Controllers\Admin\Auth;
 
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 use Qz\Cores\AdminPage\AdminPageAdd;
@@ -38,8 +39,14 @@ class AccessController extends AdminController
             ->orderBy('id')
             ->first();
         if (empty($model)) {
+            $status = 'mobileError';
             return $this->json(compact('token', 'status', 'type'));
         }
+        if (!Hash::check($this->getParam('password'), $model->getOriginal('password'))){
+            $status = 'passwordError';
+            return $this->json(compact('token', 'status', 'type'));
+        }
+
         if ($model instanceof AdminUser) {
             $model->setConnection(config('database.default'))->tokens()->delete();
             $token = $model->setConnection(config('database.default'))->createToken('admin_user')->plainTextToken;

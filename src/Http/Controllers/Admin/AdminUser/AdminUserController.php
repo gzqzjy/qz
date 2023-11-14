@@ -2,8 +2,11 @@
 
 namespace Qz\Http\Controllers\Admin\AdminUser;
 
+use App\Exceptions\MessageException;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Qz\Cores\AdminUser\AdminUserAdd;
 use Qz\Cores\AdminUser\AdminUserDelete;
 use Qz\Cores\AdminUser\AdminUserUpdate;
@@ -156,5 +159,34 @@ class AdminUserController extends AdminController
             $data[] = compact('value', 'label');
         }
         return $this->json($data);
+    }
+
+    public function updatePassword()
+    {
+        $validator = Validator::make($this->getParam(), [
+            'old_password' => [
+                'required',
+            ],
+            'new_password' => [
+                'required',
+            ],
+        ], [
+            'old_password.required' => '请输入旧密码',
+            'new_password.required' => '请输入新密码',
+        ]);
+        if ($validator->fails()) {
+            return $this->error($validator->errors()->first());
+        }
+        $adminUser = Auth::guard('admin')->user();
+        $password = Arr::get($adminUser, 'password');
+        if (!Hash::check($this->getParam('old_password'), $password)) {
+            return $this->error("旧密码错误");
+        }
+        $id = AdminUserUpdate::init()
+            ->setId(Arr::get($adminUser, 'id'))
+            ->setPassword(Hash::make($this->getParam('new_password')))
+            ->run()
+            ->getId();
+        return $this->success(compact('id'));
     }
 }

@@ -22,6 +22,7 @@ class AdminUser extends Model implements AuthenticatableContract, AuthorizableCo
         'sex',
         'status',
         'customer_id',
+        'password',
     ];
 
     protected static function booted()
@@ -47,6 +48,8 @@ class AdminUser extends Model implements AuthenticatableContract, AuthorizableCo
     ];
 
     protected $appends = ['statusDesc'];
+
+    protected $hidden = ['password'];
 
     public function getStatusDescAttribute()
     {
