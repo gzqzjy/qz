@@ -175,7 +175,6 @@ class AdminRoleController extends AdminController
     {
         $param = $this->getParam();
         $model = AdminRoleGroup::query();
-        $model = $this->filter($model);
         $model = $model->selectRaw('id,name as label')
             ->whereHas('adminRoles')
             ->get();
