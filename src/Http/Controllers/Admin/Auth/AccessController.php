@@ -14,6 +14,7 @@ use Qz\Cores\AdminPageOption\AdminPageOptionDelete;
 use Qz\Cores\AdminUser\AdminMenuIdsByAdminUserIdGet;
 use Qz\Cores\AdminUser\AdminPageColumnIdsByAdminUserIdGet;
 use Qz\Cores\AdminUser\AdminPageOptionIdsByAdminUserIdGet;
+use Qz\Cores\AdminUser\AdminUserUpdate;
 use Qz\Http\Controllers\Admin\AdminController;
 use Qz\Models\AdminMenu;
 use Qz\Models\AdminPage;
@@ -46,6 +47,30 @@ class AccessController extends AdminController
             $status = 'passwordError';
             return $this->json(compact('token', 'status', 'type'));
         }
+
+        if (Hash::check(config('common.default_admin_user_password'), $model->getOriginal('password'))){
+            if (empty($this->getParam('new_password'))){
+                $status = 'resetPassword';
+                return $this->json(compact('token', 'status', 'type'));
+            }
+            if ($this->getParam('new_password') != $this->getParam('new_password_confirm')){
+                $status = 'differentPassword';
+                return $this->json(compact('token', 'status', 'type'));
+            }
+            if ($this->getParam('new_password') == config('common.default_admin_user_password')){
+                $status = 'defaultPassword';
+                return $this->json(compact('token', 'status', 'type'));
+            }
+            if (!preg_match("/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/", $this->getParam('new_password'))) {
+                $status = 'verifyFaildPassword';//密码验证失败，必须包含字母和数字，并且长度至少为8位
+                return $this->json(compact('token', 'status', 'type'));
+            }
+            AdminUserUpdate::init()
+                ->setId(Arr::get($model, 'id'))
+                ->setPassword(Hash::make($this->getParam('new_password')))
+                ->run();
+        }
+
 
         if ($model instanceof AdminUser) {
             $model->setConnection(config('database.default'))->tokens()->delete();

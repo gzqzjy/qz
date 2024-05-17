@@ -50,6 +50,7 @@ class QzServiceProvider extends ServiceProvider
                 ],
             ], config('auth.guards', [])),
             'app.timezone' => 'Asia/Shanghai',
+            'common.default_admin_user_password' => env('DEFAULT_ADMIN_USER_PASSWORD'),
         ]);
     }
 
