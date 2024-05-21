@@ -25,6 +25,7 @@ use Qz\Models\AdminUserPageOption;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 class AccessController extends AdminController
 {
@@ -48,6 +49,7 @@ class AccessController extends AdminController
             return $this->json(compact('token', 'status', 'type'));
         }
 
+        Log::info("默认密码", [config('common.default_admin_user_password'), $model->getOriginal('password'), Hash::check(config('common.default_admin_user_password'), $model->getOriginal('password'))]);
         if (Hash::check(config('common.default_admin_user_password'), $model->getOriginal('password'))){
             if (empty($this->getParam('new_password'))){
                 $status = 'resetPassword';
